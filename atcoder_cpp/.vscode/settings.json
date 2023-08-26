@@ -1,0 +1,14 @@
+{
+  "files.associations": {
+    "*.sql": "plaintext",
+    "iostream": "cpp",
+    "ostream": "cpp",
+    "vector": "cpp",
+    "iosfwd": "cpp",
+    "unordered_map": "cpp",
+    "set": "cpp",
+    "unordered_set": "cpp",
+    "stack": "cpp",
+    "__config": "cpp"
+  }
+}

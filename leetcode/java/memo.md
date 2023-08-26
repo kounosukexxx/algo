@@ -1,0 +1,50 @@
+- 212
+  - なんとなく既視感でいままでのと同じとしちゃだめ
+  - dfs は from が関係あることある
+    - 一回 from なしで考えてみてもいいかも
+      - 少しずつ
+    - 一度も同じとこ通らない->Set
+    - search する列の長さが n の時、dfs の計算量は n ではない。
+    - 最悪 n*n*n くら ⭐️ できたら O(N)もできないか
+    - ⭐️ シンプルに全探索は遅いことが多く、早い理由がないと無理
+  - ⭐️ 引数を渡すときは、deep copy にしなくていいのか検討する。
+    - 例えば今回は、関数の最初に deep copy したものを作った
+  - ⭐️ 10e4 _ 100 _ 100 \* 100 とかでも計算量オーバーする
+  - re: prefix tree を先に作って、検索する。
+    - 参考: https://leetcode.com/problems/implement-trie-prefix-tree/
+      - 辞書から O(N)で search できるデータ構造。
+- 56
+  - there are two kinds of overlapping
+    - first, an interval contains the other
+    - second, an interval does not contain the other, but they are crossed
+- 167 ▲
+  - re: ⭐️ できたら O(N)もできないか
+  - ⭐️two pointers: pointer が一方向にしか動かなくて、両端から動くなら O(N)
+    - additional space がいらない
+- 215: quickselect とかいうやつやってない
+- 322
+  - Integer.MAX_VALUE は足したらオーバーフローするから-1 とか必要
+  - ⭐️(overflow しうるやつ)+something の時は、必ず long にキャスト
+  - 固定長を扱うなら array で十分。debug もできる
+- 733: 基本全探索する時は visited 用意
+- 543: depth は自分の Node も含めるのが良さそう
+- 236: -1
+  - ⭐️ 確信してからコードかく。特に再帰とか tree とか慣れてないやつ。
+  - 考えるときは、うまく抽象化しつつ考える。全部を手続き的に理解するのは無理
+  - int l, m, r で l+m+r>=2 とか
+  - re: ＊node から上に行く文には一方向きである
+  - re2: 3。stack でやってたけど見てない
+- 207: ▲
+  - 連結リストは int[2]無理。int に落とし込め。
+  - 有向グラフか無向グラフか
+  - すぐに新しい関数定義しろ`HashMap<Integer, ArrayList<Integer>> adjList = createAdjList();`
+  - java は型名長すぎるから class field で定義していけ
+    - 初期化忘れ注意
+  - java は配列が null だと for 文回せない。
+  - ⭐️ 有向グラフが循環してるかどうか
+    - visited はある一本の経路でのみ考えるべき。
+      - 都度 visited をリフレッシュやら都度 pop しないといけない
+  - (0 <= course < num だったので、今回はそこまで疎にならず、adj は List<List<Integer>>でも良いといえば良い)
+  - 1. Kahn's Algorithm みてない
+
+graph, dp をやりたい。あとは LinkedList と others を少し。

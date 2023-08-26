@@ -1,0 +1,169 @@
+## DP
+
+配列を作成していき、その値を一個返して終了するパターン
+再帰とか使えば配列に記録しないでもできることもあるが、こちらがわかりやすいかも（ただ時間、空間共に計算量は再帰の方が最適化させやすそう）
+brute force 的にやるなら、まずは多次元配列に格納かも。というか DP って基本そうやってやるものかも。
+⭐️ 再帰っていうのは一個前の結果しか使えない、特殊 DP
+
+- 配列を使った dp の場合、答えは漸化式で表せることが多い
+- 配列の作り方は、まず一次元目は普通にある配列になる。二つ目は、添字とか別の配列の index
+- dp[i+1]=max(dp[i],dp[i]+a[i])
+- 実際に DP を設計するときに、「これだけじゃ情報が足りない -> 添字を付け足す」というのは非常によく行います。
+  - ナップサック問題
+    - dp[i][w] =
+      - dp[i]w−weight[i]]+value[i] (weight[i] <= w)
+      - dp[i][w] (weight[i] > w)
+    - 任意の i に対して dp[i][j] (j=0, 1, ... , W) を求める
+  - combination sum を stack を使用せずに解く。添字を使って解く。
+    - dp[i][j] := i 番目までの整数の中からいくつか選んで総和を j とすることが可能かどうか (bool 値)
+    - dp[i+1][j] =
+      - true (if dp[i][j]=True or dp[i]j-values[i]])
+      - false (otherwise)
+      - ⬆︎ j < values[i] だったら out of range になる。あと、式が単純にプログラム書きずらい
+    - `` =
+      - dp[i][j] = dp[i][j] | dp[i]j-values[i]] (if j >= values[i])
+      - dp[i][j] (otherwise)
+  - その他
+    - dp[i+1][j] := j 番目までの整数の中からいくつかの整数を選んで総和が j とする方法をすべて考えたときの、選んだ整数の個数の最小値
+    - 一般に bool 値を求める DP をすることは無駄であることが多く、同じ計算量でもっと多くのことを知ることができます
+      - bool[][]とかは、int[]でいける（N クイーン問題のクイーンの盤面）。
+        - 配列というのは、制限のある(A, int)の pair。制限なく使う場合は pair を使用。
+- 01 で論理和を扱いたかったら、modulo 2 を取れば良い
+
+## AtCoder
+
+- 295D
+  - あるものからの差分が等しい二つの物は等しい (a-x = b-x <==> a=b)
+  - map の key, value を vector にするとか全然あり
+    - (auto &nx: mp) => nx.first(=key), nx.second(=value)
+  - vector<> = a(4, 0) (= [0, 0, 0, 0])
+- 290D
+  - for 文の条件部分を、「そこで判定する」or「中で判定する」: 一緒になるようにするなら注意必要
+  - ポインタを渡して他の関数でいじってもらう場合は、var a A で&A を引数に渡す (var a \*A じゃない)
+- 287
+  - 複数回出力する場合、「今までの結果利用」で最適化できる（dp の一種）
+  - 前処理
+  - 配列の reverse してもいい
+  - ⭐️ 最適化した結果、計算量が減っているか早めにだすべき
+- 286
+  - dp 配列の index は、各変数を組み合わせてやってみる。
+    - 「思いついた解き方」から連想して作ろうとすると思いつかない。（試しに考えてみないと無理）
+    - dp[i][j]で、i と j のうち片方が大きい分には大丈夫そう
+- 285
+  - 矢印があるものは有向グラフにしてみる
+  - ペアがあるものは無向グラフにできる
+  - グループ化できるものは、union_find tree にできる
+- 283
+  - TODO: 方針書いたけどやってない？
+- 282
+  - 知識と計算で求められる数もある。例えば、組み合わせの数とか使える(nC2)
+- 281
+  - この方針でいけるっていう確信が持てるまではコードを書くべきでない
+  - dp 添字の順番は、左から決められる順番
+  - dp 配列でやる場合は、全添字で iterate することは確定
+  - ⭐️ まずは、プログラム云々の前に、この添字の dp 配列を使うとして、どうやって決めていくか考える必要がある
+    - dp: `その時点で`最適なものをいれておく、というのもあり。。
+      - この場合は、dp_a = max(dp_a, dp_b)みたいに、自分と比べることあり s
+    - dp に全部値が入らない場合もある。
+      - 一層目は dp[0][0][0]しか使わないとかもあり
+  - dp[i][j][k] = ... の形で表せるのは特別なケース。
+    - ⭐️ ボトムアップで dp[i+a][j+b][k+c]を入れていくのもあり。
+      - a_i を使う or 使わないでそれぞれ dp を作っていく
+  - ⭐️ 添字が状態だとして、遷移することで状態が変わるっていうイメージ
+    - (ある k, d の時、a_i を使う(or 使わない)ことで、遷移をしていく)
+  - 10^9 は、maxInt32 の半分くらいの数値。足すことがあるなら、long long を使うべき。
+    - （オーバーフローしても例外投げてくれず、その時の処理は未定義）
+- 280
+  - maxInt64 = 9 223 372 036 854 775 807 =~ 9 \* 10^18
+  - n が素数でない => E_p<=√n (n%p = 0)
+    - A_p<=√n (n%p != 0 => n は素数)
+      - n の素因数 p を探したかったら、√n 以下の p(p\*p<=n の p)を探せばいい。
+        - 素因数分解したかったら、p=2 から見ていって、N を p で割りつつ数えていく。
+          (そうすると、p が素数じゃ無くなった時、p の素因数は必ず N の素因数じゃなくなっているので、N%p==0 にならない。)
+          - https://algo-method.com/descriptions/119
+  - 解説の 2 は諦めた
+- 279
+  - float, double 型データ構造: https://daeudaeu.com/c_float/
+  - 丸め誤差: https://www.foresight.jp/fe/column/about-error/
+  - 答えが 8.8 上下の整数としたら、9±5 を調べてた。
+- 277
+  - 最悪計算量考えてみるべき。
+    ー でかい場合は別の方法を探すしかない
+  - int16 の最大値は 32,000
+  - ルール間違えてた。これだけはミスらないように。
+  - 基本 ll でやるべきかも
+  - 降順 sort: sort(data.begin(),data.end(),std::greater<T>());
+- 276e
+  - 戻ってくる場合、普通にやったら最初 visited になるのどうするか
+  - 「visited かどうかと、成功かどうか」調べるのどこにするべきか
+  - str[i]でアクセスすると、byte になる。(マルチバイト文字は注意)
+  - string⇨runes にする時は、iterate を使用するべき。
+  - len(str): byte 長
+  - utf8.RuneCountInString(str); rune count
+  - scan でとってくる string は、\n 取り除いてる。
+  - || if 文は、ok になった時点でその後は読まないので、後ろの方に out of range になるやつがあってもその前に return するなら ok
+
+## Graph
+
+- adjacency matrix
+
+  - complexity
+    - 空間計算量 O(n^2)
+    - insert O(1)
+    - check if an edge exists: O(1)
+    - check all edges from a node: O(n)
+  - [][]bool ([s][t]bool)
+    - if you need cost, bool→int
+  - only int is supported in value
+
+- adjacency list
+
+  - 疎なグラフが多いので、こちらが使われることが多い。あと、string とかはこちらしか無理。
+  - complexity
+    - 空間計算量 O(V+E)
+    - insert: node についてる list の数
+    - check if an edge exists: 最大ついてる node の数
+    - check all edges from a node: node の数
+  - []node<T>, node<T>: {T v, \*node next}
+  - map[T]node<T>
+    - T が int だったら、[]node の index を key にすればいいけど、
+      T が string だったら、O(1)で s を計算するには、map にする必要がある。
+  - [][]int: 雑だがこれでもいける。(メモリ無駄に使うけど描くのが楽)
+    - メリットとして、G[i].size()が使える
+    - 一般には map[T]vector<T>
+
+- 無向グラフは v、w どっちも値を入れる。
+- グラフを全探索する場合、複数回踏んでしまう時は visited([]bool, set<T>)とかを用意する。
+
+- DFS
+  - ある node を mark as visited
+  - for (every linked nodes): if not visited, DFS(t)
+- BFS
+  - push a node into a queue, and mark it as pushed
+  - while !empty:
+    - pop
+    - for (every linked nodes): if not pushed, push it into the queue and mark it as pushed.
+
+## prime
+
+- check if prime: O(√N)
+- init isPrime(N): O(N\*loglogN)
+  - 0 から N までの数で prime か S 回調べる場合の計算量
+    - 前者: O(S\*√S_i) = O(S√S)
+    - 後者: O(N\*loglogN) + O(S)
+    - S が N 並みに大きいなら、eratosthenes で isPrime 作るべき
+
+## prefix sum (累積和)
+
+- 区間(l, r)の和 ➡ 累積和利用 ︎
+- 一般的な場合(柔軟に変えて考える)
+  - a[l] + a[l+1] + ... + a[r] = A[r+1] - A[l]
+    - A[i]: sum of a[:i]
+  - [l:r): a[l] + a[l+1] + ... + a[r-1] = A[r] - A[l]
+  - 1, 2, 3, 4 ⇨ A[i]: 0, 1, 3, 6, 10
+- 問題 3, 4: https://qiita.com/drken/items/56a6b68edef8fc605821
+  - ⭐️ やることを実際書いてみるべき。実は間違ってる or もっといい方法があることに気づく
+  - 5 は見てない
+- 二次元: s[r][c] := [0,r) \* [0,c) の長方形の和
+  - 累積和を作る前処理は O(R\*C)
+  - s[r+1][c+1] = s[r][c+1] + s[r+1][c] - s[r][c] + s[r][c]
